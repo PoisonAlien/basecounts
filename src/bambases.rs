@@ -7,7 +7,7 @@ use std::convert::TryInto;
 use std::str::from_utf8;
 use std::collections::BTreeMap;
 use std::path::Path;
-use rayon::collections::btree_map;
+use indicatif::ProgressBar;
 
 pub fn bambases(){
 	let args = fetchargs::fetchargs();
@@ -17,11 +17,14 @@ pub fn bambases(){
 	print_header(&args.bam);
 
 	//refbases.iter().map(|(k, v)|, {fetch_bases(&args.bam, k, v)});
+	let pb = ProgressBar::new(refbases.len() as u64);
 
 	for (k, v) in refbases{
 		let kspl: Vec<&str> = k.split(':').collect();
-		fetch_bases(&args.bam, kspl[0], kspl[1], &v)
-	}    
+		fetch_bases(&args.bam, kspl[0], kspl[1], &v);
+		pb.inc(1);
+	}
+	pb.finish_with_message("done");
 }
 
 fn print_header(bam_files: &Vec<String>){
