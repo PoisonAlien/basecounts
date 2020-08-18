@@ -13,10 +13,10 @@ pub fn get_fasta_base(fa: &str, bed: &str) -> BTreeMap<String, String>{
     
 	let fa = Fai::new(fa.to_string());
 
-    let fafile = File::open(&fa.fafile).expect("Nope!");
+    let fafile = File::open(&fa.fafile).expect("Could not open the file!");
     let mut fareader = BufReader::new(fafile);
 
-    let file = File::open(bed).expect("Cound not");
+    let file = File::open(bed).expect("Cound not open the file!");
     let filer = BufReader::new(file);
 
     for line in filer.lines(){
@@ -95,4 +95,31 @@ impl Fai {
 		}
 		Fai{fafile, fai}
 	}
+}
+
+
+pub fn refalt_db(bed: &str) -> BTreeMap<String, String> {
+
+	let file = File::open(bed).expect("Cound not open the file!");
+	let filer = BufReader::new(file);
+	
+	let mut refbase: BTreeMap<String, String> = BTreeMap::new();
+
+    for line in filer.lines(){
+        let line = line.unwrap();
+        let bedspl: Vec<&str> = line.split('\t').collect();
+        let chr = bedspl[0];
+        let mut bedstart: u64 = bedspl[1].parse().unwrap();
+		bedstart = bedstart - 1;
+
+		let id: String = chr.to_string() + ":" + &bedstart.to_string();
+		let rbase: String = bedspl[2].parse().unwrap();
+		let abase: String = bedspl[3].parse().unwrap();
+		let base: String = rbase + "/" + &abase;
+		refbase.insert(id, base);
+	}
+
+	//println!("{:?}", refbase);
+
+	refbase
 }

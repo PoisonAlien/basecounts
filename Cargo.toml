@@ -1,5 +1,5 @@
 [package]
-name = "basecount2"
+name = "basecounts"
 version = "0.1.0"
 authors = ["poisonalien <anandmt3@gmail.com>"]
 edition = "2018"
