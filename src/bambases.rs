@@ -21,14 +21,21 @@ pub fn bambases(){
 	
 	print_header(&args.bam, args.refalt);
 
-	let pb = ProgressBar::new(refbases.len() as u64);
-
-	for (k, v) in refbases{
-		let kspl: Vec<&str> = k.split(':').collect();
-		fetch_bases(&args.bam, kspl[0], kspl[1], &v, args.vaf, args.refalt);
-		pb.inc(1);
+	if args.verbose{
+		let pb = ProgressBar::new(refbases.len() as u64);
+		//pb.set_draw_delta(refbases.len() as u64 / 100);
+		for (k, v) in refbases{
+			let kspl: Vec<&str> = k.split(':').collect();
+			fetch_bases(&args.bam, kspl[0], kspl[1], &v, args.vaf, args.refalt);
+			pb.inc(1);
+		}
+		pb.finish_with_message("done");
+	}else{
+		for (k, v) in refbases{
+			let kspl: Vec<&str> = k.split(':').collect();
+			fetch_bases(&args.bam, kspl[0], kspl[1], &v, args.vaf, args.refalt);
+		}
 	}
-	pb.finish_with_message("done");
 }
 
 fn print_header(bam_files: &Vec<String>, refalt: bool){
