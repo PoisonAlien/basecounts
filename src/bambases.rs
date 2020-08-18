@@ -14,9 +14,9 @@ pub fn bambases(){
 	
 	let refbases;
 	if args.refalt{
-		refbases = refbases::refalt_db(&args.loci);
+		refbases = refbases::refalt_db(&args.loci, args.placeholder);
 	}else{
-		refbases = refbases::get_fasta_base(&args.fasta, &args.loci);
+		refbases = refbases::get_fasta_base(&args.fasta, &args.loci, args.placeholder);
 	}
 	
 	print_header(&args.bam, args.refalt);
@@ -43,7 +43,7 @@ fn print_header(bam_files: &Vec<String>, refalt: bool){
 	if refalt{
 		print!("chr\tpos\tgenotype\tspaceholder");
 	}else{
-		print!("chr\tpos\trefbase");
+		print!("chr\tpos\trefbase\tspaceholder");
 	}
 	
 
@@ -88,11 +88,11 @@ pub fn fetch_bases(bam_files: &Vec<String>, chr: &str, pos: &str, refbase: &str,
 		pos_depth_db.insert(bam_file.to_string(), countsdb);
 	}
 
+	let raspl: Vec<&str> = refbase.split("/").collect();
 	if ratbl{
-		let raspl: Vec<&str> = refbase.split("/").collect();
 		print!("{}\t{}\t{}/{}\t{}", chr, pos, raspl[0], raspl[1], raspl[2]);
 	}else{
-		print!("{}\t{}\t{}", chr, pos, refbase);
+		print!("{}\t{}\t{}\t{}", chr, pos, raspl[0], raspl[1]);
 	}
 	
 	for bam_file in bam_files{

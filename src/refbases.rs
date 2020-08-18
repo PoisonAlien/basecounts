@@ -3,12 +3,12 @@ use std::io::{BufReader, BufRead, SeekFrom, Seek, Read};
 use std::fs::File;
 use std::process;
 
-pub fn get_fasta_base(fa: &str, bed: &str) -> BTreeMap<String, String>{
+pub fn get_fasta_base(fa: &str, bed: &str, ph: usize) -> BTreeMap<String, String>{
 	
 	let mut refbase: BTreeMap<String, String> = BTreeMap::new();
 
 	if fa.is_empty(){
-		refbase = get_fasta_base_decoy(bed);
+		refbase = get_fasta_base_decoy(bed, ph);
 		return refbase;
     }
     
@@ -43,7 +43,14 @@ pub fn get_fasta_base(fa: &str, bed: &str) -> BTreeMap<String, String>{
 				fastr.push_str(&l);
 				if fastr.len() >= rlen{ 
 					let id: String = chr.to_string() + ":" + &bedstart.to_string();
-					let base: String = fastr[0..rlen].to_string();
+					let mut base: String = fastr[0..rlen].to_string();
+					if ph != 0{
+						base = base + "/" + &bedspl[ph].to_string();
+					}else{
+						base = base + "/" + &"-".to_string();
+					}
+					
+
 					refbase.insert(id, base);
 		            break;
 		        }
@@ -99,7 +106,7 @@ impl Fai {
 }
 
 
-pub fn refalt_db(bed: &str) -> BTreeMap<String, String> {
+pub fn refalt_db(bed: &str, ph: usize) -> BTreeMap<String, String> {
 
 	let file = File::open(bed).expect("Cound not open the file!");
 	let filer = BufReader::new(file);
@@ -119,8 +126,8 @@ pub fn refalt_db(bed: &str) -> BTreeMap<String, String> {
 		let abase: String = bedspl[3].parse().unwrap();
 		let mut base: String = rbase + "/" + &abase;
 
-		if bedspl.len() > 3{
-			base = base + "/" + &bedspl[4].to_string();
+		if ph != 0{
+			base = base + "/" + &bedspl[ph].to_string();
 		}else{
 			base = base + "/" + &"-".to_string();
 		}
@@ -134,7 +141,7 @@ pub fn refalt_db(bed: &str) -> BTreeMap<String, String> {
 }
 
 //In case fasta file not provided, generate a db with "-" as refbase
-pub fn get_fasta_base_decoy(bed: &str) -> BTreeMap<String, String>{
+pub fn get_fasta_base_decoy(bed: &str, ph: usize) -> BTreeMap<String, String>{
 
 	let file = File::open(bed).expect("Cound not open the file!");
 	let filer = BufReader::new(file);
@@ -149,7 +156,12 @@ pub fn get_fasta_base_decoy(bed: &str) -> BTreeMap<String, String>{
 		bedstart = bedstart - 1;
 
 		let id: String = chr.to_string() + ":" + &bedstart.to_string();
-		let rbase: String = "-".to_string();
+		let mut rbase: String = "-".to_string();
+		if ph != 0{
+			rbase = rbase + "/" + &bedspl[ph].to_string();
+		}else{
+			rbase = rbase + "/" + &"-".to_string();
+		}
 		refbase.insert(id, rbase);
 	}
 
