@@ -41,7 +41,7 @@ pub fn bambases(){
 fn print_header(bam_files: &Vec<String>, refalt: bool){
 	
 	if refalt{
-		print!("chr\tpos\tgenotype");
+		print!("chr\tpos\tgenotype\tspaceholder");
 	}else{
 		print!("chr\tpos\trefbase");
 	}
@@ -88,7 +88,13 @@ pub fn fetch_bases(bam_files: &Vec<String>, chr: &str, pos: &str, refbase: &str,
 		pos_depth_db.insert(bam_file.to_string(), countsdb);
 	}
 
-	print!("{}\t{}\t{}", chr, pos, refbase);
+	if ratbl{
+		let raspl: Vec<&str> = refbase.split("/").collect();
+		print!("{}\t{}\t{}/{}\t{}", chr, pos, raspl[0], raspl[1], raspl[2]);
+	}else{
+		print!("{}\t{}\t{}", chr, pos, refbase);
+	}
+	
 	for bam_file in bam_files{
 		for val in pos_depth_db.get(bam_file){
 			print!("\t");

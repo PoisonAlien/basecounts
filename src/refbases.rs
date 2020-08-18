@@ -108,15 +108,23 @@ pub fn refalt_db(bed: &str) -> BTreeMap<String, String> {
 
     for line in filer.lines(){
         let line = line.unwrap();
-        let bedspl: Vec<&str> = line.split('\t').collect();
+		let bedspl: Vec<&str> = line.split('\t').collect();
         let chr = bedspl[0];
         let mut bedstart: u64 = bedspl[1].parse().unwrap();
 		bedstart = bedstart - 1;
 
 		let id: String = chr.to_string() + ":" + &bedstart.to_string();
+		
 		let rbase: String = bedspl[2].parse().unwrap();
 		let abase: String = bedspl[3].parse().unwrap();
-		let base: String = rbase + "/" + &abase;
+		let mut base: String = rbase + "/" + &abase;
+
+		if bedspl.len() > 3{
+			base = base + "/" + &bedspl[4].to_string();
+		}else{
+			base = base + "/" + &"-".to_string();
+		}
+
 		refbase.insert(id, base);
 	}
 
