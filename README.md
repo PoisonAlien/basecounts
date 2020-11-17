@@ -115,8 +115,13 @@ chr	pos	genotype	spaceholder	Germline	primary	metastasis
 
 ### Installation
 
-Install [rust](https://www.rust-lang.org/tools/install) and run the below command.
+Install [rust](https://www.rust-lang.org/tools/install) and run the below commands.
 
 ```
-cargo install --git https://github.com/PoisonAlien/basecounts
+git clone https://github.com/PoisonAlien/basecounts
+cd basecounts
+cargo build --release
+
+#binary should be built under target/release direcotry
+./target/release/basecounts -h
 ```
